@@ -2,12 +2,18 @@ import React from 'react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
 import { CountryData } from '../data/countries';
 
-const geoUrl = "https://raw.githubusercontent.com/deldersveld/topojson/master/world-countries.json";
+const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
 interface MapViewProps {
   data: CountryData[];
   onCountryClick: (country: CountryData) => void;
 }
+
+// Map custom short names in our data to world-atlas topjson standard names
+const nameMapping: Record<string, string> = {
+  "Tanzania": "United Republic of Tanzania",
+  "UAE": "United Arab Emirates"
+};
 
 export function MapView({ data, onCountryClick }: MapViewProps) {
 
@@ -18,8 +24,11 @@ export function MapView({ data, onCountryClick }: MapViewProps) {
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
               geographies.map((geo) => {
-                const geoIso3 = geo.id; // It has ISO3 inside the id block
-                const matchedCountry = data.find(c => c.iso3 === geoIso3);
+                const geoName = geo.properties.name;
+                const matchedCountry = data.find(c => {
+                  const mapped = nameMapping[c.name] || c.name;
+                  return mapped === geoName;
+                });
                 
                 const isSelected = !!matchedCountry;
                 const fill = isSelected ? 'var(--primary)' : 'var(--border)';
