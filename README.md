@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Africa & Middle East Economic Outlook Dashboard
 
-## Getting Started
+A pristine, high-performance web dashboard displaying detailed economic indicators (Population, GDP, GDP Per Capita, Disposable Income, Inflation, and Real GDP Growth) across countries in the Africa and Middle East regions.
 
-First, run the development server:
+![Dashboard Preview](./public/preview.png) *(Placeholder if you add an image!)*
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🌟 Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Advanced Data Aggregation**: Real-time rollups of total active GDP and average GDP per capita based on applied filters.
+- **Interactive Map View**: A React Simple Maps integration offering a clean choropleth view of data variables across the continent and region.
+- **Side-by-Step Comparison**: Select up to 4 countries and compare them directly on a responsive Radar Chart.
+- **Intelligent Search & Export**: Filter countries instantly by name or capital, and export the current view to a clean CSV file.
+- **Premium Dark Mode Design**: Developed with meticulous vanilla CSS custom properties tailored to an elegant dark aesthetic (`globals.css`), featuring custom entry and hover animations.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠 Tech Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Framework**: Next.js 15 (App Router)
+- **Language**: TypeScript
+- **Styling**: Vanilla CSS with customized variable theming
+- **Data Visualization**: Recharts, React Simple Maps, d3-geo
+- **Icons**: Lucide React
+- **Hosting**: Vercel
 
-## Learn More
+## 🚀 Getting Started
 
-To learn more about Next.js, take a look at the following resources:
+To run this application locally, you will need Node.js installed.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/0xdidi/Africa-ME-Economic-Outlook.git
+   cd Africa-ME-Economic-Outlook
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Install Dependencies:**
+   Since this project uses modern React 19 alongside older established visualization libraries, use the `--legacy-peer-deps` flag (or rely on the included `.npmrc`).
+   ```bash
+   npm install
+   ```
 
-## Deploy on Vercel
+3. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+4. **Open your browser:**
+   Navigate to [http://localhost:3000](http://localhost:3000) to see the application.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 💡 Configuration
+
+All country data serves as the "database" inside `src/data/countries.ts`. To expand this application further, you can connect an API to feed into the global state within `src/app/page.tsx` instead of using static definitions.
+
+## 📄 License
+
+This project is intended for educational purposes and internal reference.

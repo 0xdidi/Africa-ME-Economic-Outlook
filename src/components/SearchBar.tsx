@@ -1,7 +1,6 @@
 import React from 'react';
 import { Search, Download } from 'lucide-react';
 import { CountryData } from '../data/countries';
-import '../app/globals.css';
 
 interface SearchBarProps {
   searchQuery: string;
@@ -43,7 +42,7 @@ export function SearchBar({ searchQuery, onSearch, filteredData }: SearchBarProp
   return (
     <div style={{ display: 'flex', gap: '1rem', width: '100%', marginBottom: '20px', alignItems: 'center' }}>
       <div style={{ position: 'relative', flex: 1 }}>
-        <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-light)' }} size={20} />
+        <Search style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-dim)' }} size={20} />
         <input 
           type="text" 
           placeholder="Search country by name or capital..." 
@@ -51,22 +50,44 @@ export function SearchBar({ searchQuery, onSearch, filteredData }: SearchBarProp
           onChange={(e) => onSearch(e.target.value)}
           style={{
             width: '100%',
-            padding: '12px 12px 12px 40px',
-            borderRadius: 'var(--radius)',
+            padding: '16px 16px 16px 48px',
+            borderRadius: '100px',
             border: '1px solid var(--border)',
-            backgroundColor: 'var(--panel-bg)',
-            color: 'var(--text-main)',
+            backgroundColor: 'var(--surface)',
+            color: 'var(--text)',
             fontSize: '1rem',
-            fontFamily: 'var(--font-heading)',
+            fontFamily: 'inherit',
             outline: 'none',
-            transition: 'var(--transition)'
+            transition: 'border-color 0.2s',
+            boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)'
           }}
+          onFocus={(e) => e.target.style.borderColor = 'var(--accent)'}
+          onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
         />
       </div>
       <button 
-        className="chip" 
         onClick={handleExport}
-        style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: '8px', background: 'var(--primary)', color: 'black' }}
+        style={{ 
+          padding: '14px 24px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '8px', 
+          background: 'var(--surface)', 
+          color: 'var(--text)', 
+          border: '1px solid var(--border)',
+          borderRadius: '100px',
+          cursor: 'pointer',
+          fontWeight: 600,
+          transition: 'all 0.2s'
+        }}
+        onMouseOver={(e) => {
+          e.currentTarget.style.background = 'var(--border)';
+          e.currentTarget.style.color = 'white';
+        }}
+        onMouseOut={(e) => {
+          e.currentTarget.style.background = 'var(--surface)';
+          e.currentTarget.style.color = 'var(--text)';
+        }}
       >
         <Download size={18} /> Export CSV
       </button>

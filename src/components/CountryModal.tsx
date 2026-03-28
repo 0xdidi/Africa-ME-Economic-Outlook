@@ -14,7 +14,7 @@ export function CountryModal({ country, onClose }: CountryModalProps) {
       <div className="modal-slide-over">
         <button 
           onClick={onClose} 
-          style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--text-light)', cursor: 'pointer' }}
+          style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}
         >
           <X size={24} />
         </button>
@@ -22,18 +22,18 @@ export function CountryModal({ country, onClose }: CountryModalProps) {
         <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '30px', marginTop: '10px' }}>
           <span style={{ fontSize: '3rem', lineHeight: 1 }}>{country.flag}</span>
           <div>
-            <h2 style={{ margin: 0, fontSize: '2rem', color: 'var(--text-main)', letterSpacing: '-0.5px' }}>{country.name}</h2>
+            <h2 style={{ margin: 0, fontSize: '2rem', color: 'var(--text)', letterSpacing: '-0.5px' }}>{country.name}</h2>
             <span className={`region-badge ${country.region === 'Africa' ? 'badge-africa' : 'badge-me'}`} style={{ marginTop: '5px' }}>
               {country.region}
             </span>
           </div>
         </div>
 
-        <div style={{ background: 'var(--surface2)', padding: '20px', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '20px' }}>
-          <h4 style={{ color: 'var(--text-light)', marginTop: 0, marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Overview</h4>
+        <div style={{ background: 'var(--surface2)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', marginBottom: '20px' }}>
+          <h4 style={{ color: 'var(--text-dim)', marginTop: 0, marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Overview</h4>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <MapPin size={18} color="var(--primary)" />
+              <MapPin size={18} color="var(--accent)" />
               <div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-dim)' }}>Capital</div>
                 <div style={{ fontWeight: 600 }}>{country.capital}</div>
@@ -49,8 +49,8 @@ export function CountryModal({ country, onClose }: CountryModalProps) {
           </div>
         </div>
 
-        <div style={{ background: 'var(--surface2)', padding: '20px', borderRadius: 'var(--radius)', border: '1px solid var(--border)', marginBottom: '20px' }}>
-          <h4 style={{ color: 'var(--text-light)', marginTop: 0, marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Economic Indicators</h4>
+        <div style={{ background: 'var(--surface2)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border)', marginBottom: '20px' }}>
+          <h4 style={{ color: 'var(--text-dim)', marginTop: 0, marginBottom: '15px', textTransform: 'uppercase', letterSpacing: '1px', fontSize: '0.8rem' }}>Economic Indicators</h4>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

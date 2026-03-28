@@ -9,7 +9,6 @@ interface ComparisonModalProps {
 }
 
 export function ComparisonModal({ countries, onClose }: ComparisonModalProps) {
-  // We need to normalize the values so they can be compared on a single radar chart (0 to 100 scale)
   const metrics: (keyof CountryData)[] = ['population', 'gdp_ppp', 'gdp_per_cap', 'disposable', 'inflation'];
   const labels = ['Population', 'GDP (PPP)', 'GDP per Capita', 'Disposable Income', 'Inflation Rate'];
 
@@ -22,7 +21,6 @@ export function ComparisonModal({ countries, onClose }: ComparisonModalProps) {
     const dataPoint: any = { subject: labels[index], fullMark: 100 };
     countries.forEach(c => {
       const val = (c as any)[m] as number;
-      // Normalizing to 100, careful with 0 max
       dataPoint[c.name] = maxValues[m] === 0 ? 0 : (val / maxValues[m]) * 100;
       dataPoint[`${c.name}_raw`] = val;
     });
@@ -34,7 +32,7 @@ export function ComparisonModal({ countries, onClose }: ComparisonModalProps) {
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div style={{ background: 'var(--surface2)', padding: '12px', border: '1px solid var(--border)', borderRadius: 'var(--radius)' }}>
+        <div style={{ background: 'var(--surface2)', padding: '12px', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)' }}>
           <p style={{ margin: '0 0 10px 0', fontWeight: 'bold' }}>{label}</p>
           {payload.map((entry: any, index: number) => (
             <p key={`item-${index}`} style={{ margin: '5px 0', color: entry.color, fontSize: '13px' }}>
@@ -48,21 +46,20 @@ export function ComparisonModal({ countries, onClose }: ComparisonModalProps) {
   };
 
   return (
-    <>
-      <div className="modal-backdrop" onClick={onClose} />
-      <div className="modal-center">
+    <div className="modal-backdrop" onClick={onClose}>
+      <div className="modal-center" onClick={(e) => e.stopPropagation()}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <h2 style={{ margin: 0, color: 'var(--text-main)' }}>Compare Countries</h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-light)', cursor: 'pointer' }}>
+          <h2 style={{ margin: 0, color: 'var(--text)' }}>Compare Countries</h2>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--text-dim)', cursor: 'pointer' }}>
             <X size={24} />
           </button>
         </div>
 
-        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px' }}>
+        <div style={{ display: 'flex', gap: '15px', marginBottom: '20px', flexWrap: 'wrap' }}>
           {countries.map((c, i) => (
             <div key={c.iso3} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: 'var(--surface2)', borderRadius: '100px', borderLeft: `3px solid ${colors[i % colors.length]}` }}>
               <span style={{ fontSize: '1.2rem' }}>{c.flag}</span>
-              <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{c.name}</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text)' }}>{c.name}</span>
             </div>
           ))}
         </div>
@@ -74,7 +71,7 @@ export function ComparisonModal({ countries, onClose }: ComparisonModalProps) {
               <PolarAngleAxis dataKey="subject" tick={{ fill: 'var(--text-dim)', fontSize: 12 }} />
               <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
               <Tooltip content={<CustomTooltip />} />
-              <Legend />
+              <Legend wrapperStyle={{ paddingTop: '20px' }} />
               {countries.map((c, i) => (
                 <Radar
                   key={c.iso3}
@@ -93,6 +90,6 @@ export function ComparisonModal({ countries, onClose }: ComparisonModalProps) {
           * Values are normalized as a percentage of the highest value among selected countries for comparative purposes.
         </p>
       </div>
-    </>
+    </div>
   );
 }
