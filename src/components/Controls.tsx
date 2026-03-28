@@ -6,9 +6,11 @@ interface ControlsProps {
   onSort: (col: string) => void;
   currentRegion: string;
   onRegionChange: (region: string) => void;
+  viewMode: 'table' | 'map';
+  onViewModeChange: (mode: 'table' | 'map') => void;
 }
 
-export function Controls({ currentSort, currentDir, onSort, currentRegion, onRegionChange }: ControlsProps) {
+export function Controls({ currentSort, currentDir, onSort, currentRegion, onRegionChange, viewMode, onViewModeChange }: ControlsProps) {
   const getSortIcon = (col: string) => {
     if (currentSort === col) return currentDir === 'desc' ? '▼' : '▲';
     return '↕';
@@ -52,6 +54,21 @@ export function Controls({ currentSort, currentDir, onSort, currentRegion, onReg
       >
         Disposable Inc. <span className="arrow">{getSortIcon('disposable')}</span>
       </button>
+
+      <div className="region-pills" style={{ marginRight: '15px' }}>
+        <button 
+          className={`region-pill ${viewMode === 'table' ? 'rp-all' : ''}`} 
+          onClick={() => onViewModeChange('table')}
+        >
+          Table View
+        </button>
+        <button 
+          className={`region-pill ${viewMode === 'map' ? 'rp-africa' : ''}`} 
+          onClick={() => onViewModeChange('map')}
+        >
+          Map View
+        </button>
+      </div>
 
       <div className="region-pills">
         <button 

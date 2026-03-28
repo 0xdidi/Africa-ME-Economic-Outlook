@@ -5,12 +5,23 @@ import { Header } from '../components/Header';
 import { Controls } from '../components/Controls';
 import { FilterPanel, Filters } from '../components/FilterPanel';
 import { DataTable } from '../components/DataTable';
-import { countries } from '../data/countries';
+import { SearchBar } from '../components/SearchBar';
+import { DashboardAggregate } from '../components/DashboardAggregate';
+import { CountryModal } from '../components/CountryModal';
+import { ComparisonModal } from '../components/ComparisonModal';
+import { MapView } from '../components/MapView';
+import { CountryData, countries } from '../data/countries';
 
 export default function Home() {
-  const [currentSort, setCurrentSort] = useState<string>('rank');
+  const [currentSort, setCurrentSort] = useState<keyof CountryData | 'rank'>('rank');
   const [currentDir, setCurrentDir] = useState<'asc' | 'desc'>('asc');
   const [currentRegion, setCurrentRegion] = useState<string>('all');
+  const [viewMode, setViewMode] = useState<'table' | 'map'>('table');
+  
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCountries, setSelectedCountries] = useState<CountryData[]>([]);
+  const [detailModalCountry, setDetailModalCountry] = useState<CountryData | null>(null);
+  const [showComparison, setShowComparison] = useState(false);
   
   const [filters, setFilters] = useState<Filters>({
     pop: { min: null, max: null },
@@ -23,7 +34,7 @@ export default function Home() {
     if (currentSort === col) {
       setCurrentDir(currentDir === 'desc' ? 'asc' : 'desc');
     } else {
-      setCurrentSort(col);
+      setCurrentSort(col as any);
       setCurrentDir('desc');
     }
   };
@@ -45,12 +56,20 @@ export default function Home() {
   };
 
   const processedData = useMemo(() => {
-    // 1. Filter by region
-    let result = currentRegion === 'all' 
-      ? countries 
-      : countries.filter(d => d.region === currentRegion);
+    let result = countries;
 
-    // 2. AND-combine numeric filters
+    // Search Query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(c => c.name.toLowerCase().includes(q) || c.capital.toLowerCase().includes(q));
+    }
+
+    // Filter by region
+    result = currentRegion === 'all' 
+      ? result 
+      : result.filter(d => d.region === currentRegion);
+
+    // AND-combine numeric filters
     result = result.filter(d =>
       (filters.pop.min === null || d.population >= filters.pop.min) &&
       (filters.pop.max === null || d.population <= filters.pop.max) &&
@@ -62,7 +81,7 @@ export default function Home() {
       (filters.dis.max === null || d.disposable <= filters.dis.max)
     );
 
-    // 3. Sort
+    // Sort
     result.sort((a, b) => {
       let av = (a as any)[currentSort];
       let bv = (b as any)[currentSort];
@@ -71,30 +90,104 @@ export default function Home() {
     });
 
     return result;
-  }, [countries, currentRegion, currentSort, currentDir, filters]);
+  }, [searchQuery, currentRegion, currentSort, currentDir, filters]);
+
+  const handleSelectCountry = (c: CountryData, selected: boolean) => {
+    if (selected) {
+      if (selectedCountries.length < 4) {
+        setSelectedCountries([...selectedCountries, c]);
+      } else {
+        alert("You can compare up to 4 countries maximum at a time.");
+      }
+    } else {
+      setSelectedCountries(selectedCountries.filter(x => x.iso3 !== c.iso3));
+    }
+  };
 
   return (
     <main>
       <Header />
+      
+      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+        <SearchBar 
+          searchQuery={searchQuery} 
+          onSearch={setSearchQuery} 
+          filteredData={processedData} 
+        />
+        <DashboardAggregate data={processedData} />
+      </div>
+
       <Controls 
-        currentSort={currentSort}
+        currentSort={currentSort as string}
         currentDir={currentDir}
         onSort={handleSort}
         currentRegion={currentRegion}
         onRegionChange={setCurrentRegion}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
       <FilterPanel 
         filters={filters}
         updateFilter={handleUpdateFilter}
         clearAll={clearAllFilters}
       />
-      <DataTable 
-        data={processedData}
-        currentSort={currentSort}
-        currentDir={currentDir}
-        onSort={handleSort}
-        totalCount={countries.length}
-      />
+      
+      {viewMode === 'table' ? (
+        <DataTable 
+          data={processedData}
+          currentSort={currentSort as string}
+          currentDir={currentDir}
+          onSort={handleSort}
+          totalCount={countries.length}
+          selectedCountries={selectedCountries}
+          onSelectCountry={handleSelectCountry}
+          onRowClick={setDetailModalCountry}
+        />
+      ) : (
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <MapView 
+            data={processedData} 
+            onCountryClick={setDetailModalCountry}
+            // currentSort is typed properly in MapView
+          />
+        </div>
+      )}
+
+      {/* Floating Compare Button */}
+      {selectedCountries.length > 1 && (
+        <div style={{
+          position: 'fixed', bottom: '30px', left: '50%', transform: 'translateX(-50%)',
+          background: 'var(--surface)', padding: '15px 30px', borderRadius: '100px',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)', zIndex: 90, display: 'flex', alignItems: 'center', gap: '20px',
+          border: '1px solid var(--accent)'
+        }}>
+          <span style={{ fontWeight: 600 }}>{selectedCountries.length} countries selected</span>
+          <button 
+            onClick={() => setShowComparison(true)}
+            style={{ 
+              background: 'var(--accent)', color: 'black', border: 'none', 
+              padding: '10px 20px', borderRadius: '100px', fontWeight: 'bold', cursor: 'pointer' 
+            }}
+          >
+            Compare Now
+          </button>
+        </div>
+      )}
+
+      {/* Modals */}
+      {detailModalCountry && (
+        <CountryModal 
+          country={detailModalCountry} 
+          onClose={() => setDetailModalCountry(null)} 
+        />
+      )}
+      
+      {showComparison && (
+        <ComparisonModal 
+          countries={selectedCountries}
+          onClose={() => setShowComparison(false)}
+        />
+      )}
     </main>
   );
 }

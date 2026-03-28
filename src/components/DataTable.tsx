@@ -7,14 +7,17 @@ interface DataTableProps {
   currentDir: 'asc' | 'desc';
   onSort: (col: string) => void;
   totalCount: number;
+  selectedCountries: CountryData[];
+  onSelectCountry: (c: CountryData, selected: boolean) => void;
+  onRowClick: (c: CountryData) => void;
 }
 
-export function DataTable({ data, currentSort, currentDir, onSort, totalCount }: DataTableProps) {
+export function DataTable({ data, currentSort, currentDir, onSort, totalCount, selectedCountries, onSelectCountry, onRowClick }: DataTableProps) {
   const getSortIcon = (col: string) => {
     return currentSort === col && currentDir === 'desc' ? '▼' : '▲';
   };
 
-  const pctOf = (v: number, max: number) => ((v / max) * 100).toFixed(1);
+  const pctOf = (v: number, max: number) => max === 0 ? "0.0" : ((v / max) * 100).toFixed(1);
 
   const fmtPop = (v: number) => v.toFixed(v >= 100 ? 0 : 1) + 'M';
   const fmtB = (v: number) => (v >= 1000 ? '$' + (v / 1000).toFixed(2) + 'T' : '$' + v.toFixed(0) + 'B');
@@ -26,7 +29,8 @@ export function DataTable({ data, currentSort, currentDir, onSort, totalCount }:
         <table>
           <thead>
             <tr>
-              <th style={{ width: '44px' }}>#</th>
+              <th style={{ width: '40px', padding: '14px 10px', textAlign: 'center' }}>Compare</th>
+              <th style={{ width: '40px' }}>#</th>
               <th style={{ width: '90px' }}>Region</th>
               <th className={`sortable ${currentSort === 'rank' ? 'sorted' : ''}`} onClick={() => onSort('rank')}>
                 <div className="th-inner">Country <span className="sort-icon">{getSortIcon('rank')}</span></div>
@@ -49,7 +53,7 @@ export function DataTable({ data, currentSort, currentDir, onSort, totalCount }:
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={8}>
+                <td colSpan={9}>
                   <div className="empty-state">
                     <div className="es-icon">∅</div>
                     <p>No countries match all active filters.<br /><strong>Try relaxing one or more conditions.</strong></p>
@@ -76,8 +80,18 @@ export function DataTable({ data, currentSort, currentDir, onSort, totalCount }:
                   barClass = 'blue';
                 }
 
+                const isSelected = selectedCountries.some(sc => sc.iso3 === d.iso3);
+
                 return (
-                  <tr key={d.name}>
+                  <tr key={d.name} onClick={() => onRowClick(d)} style={{ cursor: 'pointer' }}>
+                    <td style={{ textAlign: 'center', padding: '12px 10px' }} onClick={(e) => e.stopPropagation()}>
+                      <input 
+                        type="checkbox" 
+                        checked={isSelected}
+                        onChange={(e) => onSelectCountry(d, e.target.checked)}
+                        style={{ cursor: 'pointer', accentColor: 'var(--primary)', width: '16px', height: '16px' }}
+                      />
+                    </td>
                     <td className="rank">{i + 1}</td>
                     <td>
                       {d.region === 'Africa' ? (
@@ -135,3 +149,4 @@ export function DataTable({ data, currentSort, currentDir, onSort, totalCount }:
     </>
   );
 }
+
